@@ -1,0 +1,3094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentimate - AI-Powered Animation Tool</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        nav {
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            position: relative;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            opacity: 0;
+            transform: translateY(-20px);
+            position: relative;
+            padding: 0.5rem 1rem;
+            overflow: hidden;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .nav-links a:hover::before {
+            transform: translateX(0);
+        }
+
+        .hero {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            min-height: 70vh;
+            margin-bottom: 2rem;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 150px;
+            background: linear-gradient(to bottom, transparent, #0a0a0a);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .main-title {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0;
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            position: relative;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: #888;
+            margin-bottom: 2rem;
+            opacity: 0;
+            position: relative;
+        }
+
+        .gradient-heart {
+            position: absolute;
+            font-size: 15rem;
+            opacity: 0;
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            z-index: -1;
+            filter: blur(5px);
+        }
+
+        .input-container {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            margin-top: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .input-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% {
+                transform: translateX(-100%) rotate(45deg);
+            }
+            100% {
+                transform: translateX(100%) rotate(45deg);
+            }
+        }
+
+        .input-container input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1rem;
+            padding: 0.5rem;
+            outline: none;
+        }
+
+        .input-container button {
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .input-container button:hover {
+            transform: scale(1.05);
+        }
+
+        .project-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            width: 280px;
+            margin: 2rem auto;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .project-card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .project-card h3 {
+            color: #fff;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .project-card p {
+            color: #888;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+        }
+
+        .project-card .view-project {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: transform 0.3s ease;
+        }
+
+        .project-card .view-project:hover {
+            transform: scale(1.05);
+        }
+
+        .features {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin-top: 3rem;
+            margin-bottom: 4rem;
+            opacity: 0;
+        }
+
+        .feature {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .feature::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: translateX(-100%);
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .feature:hover::before {
+            transform: translateX(100%);
+            transition: transform 0.6s ease;
+        }
+
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 80%, rgba(0, 0, 0, 0));
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 80%, rgba(0, 0, 0, 0));
+        }
+
+        .animation-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 80%, rgba(0, 0, 0, 0));
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 80%, rgba(0, 0, 0, 0));
+        }
+
+        .morphing-shapes {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .shape {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .showcase-section {
+            width: 100%;
+            min-height: 80vh; /* Increased from 60vh for better vertical proportion */
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem 1rem; /* Increased padding */
+            overflow: hidden;
+            background: transparent;
+            margin-top: -4rem; /* Increased negative margin to pull section up */
+            z-index: 2;
+        }
+
+        .showcase-container {
+            width: 100%;
+            max-width: 900px; /* Increased from 800px */
+            position: relative;
+            height: 600px; /* Increased from 500px */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(8px);
+            border-radius: 32px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+        }
+
+        .showcase-item {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transform: scale(0.8) translateY(20px);
+            transition: all 0.5s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .showcase-item.active {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        .demo-description {
+            font-size: 1.4rem; /* Increased from 1.2rem */
+            font-weight: 500;
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-align: center;
+            max-width: 500px; /* Increased from 400px */
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.5s ease;
+            margin-bottom: 2rem; /* Added margin */
+        }
+
+        .showcase-item.active .demo-description {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 3px;
+            width: 400px; /* Increased from 300px */
+            max-width: 400px;
+            aspect-ratio: 1;
+            background: rgba(0, 0, 0, 0.15);
+            padding: 12px; /* Increased from 8px */
+            border-radius: 24px; /* Increased from 16px */
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .demo-grid::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, transparent 30%, rgba(0, 0, 0, 0.2));
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .grid-item {
+            background: #fff;
+            border-radius: 2px;
+            aspect-ratio: 1;
+            transform-origin: center;
+            will-change: transform, opacity;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .grid-item-gradient {
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            opacity: 0;
+            transform: scale(0);
+        }
+
+        .demo-morph {
+            width: 250px; /* Increased from 200px */
+            height: 250px; /* Increased from 200px */
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            will-change: transform, border-radius;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .demo-path {
+            width: 100%;
+            max-width: 400px;
+            height: 200px;
+            position: relative;
+            background: rgba(0, 0, 0, 0.15);
+            padding: 20px;
+            border-radius: 16px;
+        }
+
+        .demo-path svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .demo-path path {
+            fill: none;
+            stroke: url(#gradient);
+            stroke-width: 4;
+            stroke-linecap: round;
+        }
+
+        .showcase-nav {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-dot.active {
+            background: #4ECDC4;
+            transform: scale(1.2);
+        }
+
+        .demo-section {
+            width: 100%;
+            max-width: 600px;
+            margin: 2rem auto 0;
+            padding: 0;
+            position: relative;
+        }
+
+        .demo-section h2 {
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .demo-prompt {
+            background: rgba(40, 40, 40, 0.95);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            width: 100%;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .demo-prompt input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .demo-component {
+            width: 300px;
+            margin: 0 auto;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .demo-component.vertical {
+            transform-origin: center;
+            transform: scale(0.9);
+        }
+
+        .demo-card {
+            background: rgba(30, 30, 30, 0.9);
+            border-radius: 16px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .demo-card.vertical {
+            height: 380px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .demo-card.vertical:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .demo-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: white;
+            font-weight: 600;
+        }
+
+        .demo-card .content {
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin-bottom: 0.8rem;
+        }
+
+        .demo-card .view-project {
+            display: inline-block;
+            padding: 0.8rem 1.2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-top: auto;
+            text-align: center;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-decoration: none;
+            margin-top: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: none;
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+            z-index: -1;
+        }
+
+        @keyframes shine {
+            0% {
+                transform: translateX(-100%) rotate(45deg);
+            }
+            100% {
+                transform: translateX(100%) rotate(45deg);
+            }
+        }
+
+        .testimonials-section {
+            padding: 6rem 2rem 4rem; /* Increased top padding for better spacing from showcase */
+            position: relative;
+            z-index: 1;
+            background: rgba(0, 0, 0, 0.1); /* Restored background */
+        }
+
+        .testimonials-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(78, 205, 196, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .testimonials-section::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 30px 30px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 3rem;
+            text-align: center;
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            position: relative;
+            z-index: 1;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .section-title::before, .section-title::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(to right, #FF6B6B, transparent);
+        }
+
+        .section-title::before {
+            right: 100%;
+            margin-right: 20px;
+        }
+
+        .section-title::after {
+            left: 100%;
+            margin-left: 20px;
+            background: linear-gradient(to left, #4ECDC4, transparent);
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .testimonial-card {
+            background: rgba(30, 30, 30, 0.7);
+            padding: 1.75rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            transform: translateY(30px);
+            opacity: 0;
+        }
+
+        .testimonial-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, #FF6B6B, #4ECDC4);
+            opacity: 0.7;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            background: rgba(40, 40, 40, 0.8);
+        }
+
+        .testimonial-text {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .testimonial-text::before {
+            content: '"';
+            font-size: 4rem;
+            position: absolute;
+            top: -2rem;
+            left: -1rem;
+            color: rgba(255, 255, 255, 0.05);
+            font-family: Georgia, serif;
+        }
+
+        .testimonial-author {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #4ECDC4;
+            text-align: right;
+            position: relative;
+            padding-top: 1rem;
+        }
+
+        .testimonial-author::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50px;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #FF6B6B);
+        }
+
+        /* Page break styling */
+        .page-break {
+            position: relative;
+            height: 120px;
+            margin: 4rem 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .page-break::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.15) 50%, transparent 100%);
+        }
+
+        .page-break-icon {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            background: #0a0a0a;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+        }
+
+        .page-break-icon::before {
+            content: '⬡';
+            font-size: 2rem;
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Use cases section styling */
+        .use-cases-section {
+            padding: 100px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .use-cases-container {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .use-case-item {
+            background-color: rgba(30, 30, 30, 0.7);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .use-case-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .use-case-number {
+            display: none;
+        }
+        
+        .use-case-icon {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            border-radius: 50%;
+            font-size: 24px;
+            color: white;
+        }
+        
+        .use-case-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+            z-index: 1;
+        }
+        
+        .use-case-description {
+            font-size: 18px;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.8);
+            margin: 0;
+            z-index: 1;
+        }
+        
+        /* Demo Styles */
+        .use-case-demo {
+            background-color: rgba(20, 20, 20, 0.5);
+            border-radius: 15px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            z-index: 1;
+        }
+        
+        .demo-prompt {
+            font-family: 'Courier New', monospace;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 16px;
+            color: #a777e3;
+            border-left: 3px solid #6e8efb;
+        }
+        
+        .demo-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 150px;
+            position: relative;
+        }
+        
+        .demo-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        
+        .demo-button {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 15px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .demo-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(110, 142, 251, 0.4);
+        }
+        
+        .demo-button.active {
+            background: linear-gradient(135deg, #a777e3, #6e8efb);
+            box-shadow: 0 0 10px rgba(167, 119, 227, 0.6);
+        }
+        
+        /* Demo 1: Change Animation */
+        #change-shape {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            border-radius: 50%;
+        }
+        
+        /* Demo 2: Apply Animation */
+        .demo-apply-elements {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .demo-apply-element {
+            padding: 10px 15px;
+            background-color: rgba(40, 40, 40, 0.8);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Courier New', monospace;
+            border: 1px solid rgba(110, 142, 251, 0.3);
+        }
+        
+        .demo-apply-element:hover {
+            background-color: rgba(110, 142, 251, 0.2);
+        }
+        
+        .demo-apply-element.active {
+            background-color: rgba(110, 142, 251, 0.3);
+            border-color: rgba(110, 142, 251, 0.8);
+        }
+        
+        /* Demo 3: Random Animation */
+        #random-element {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            border-radius: 50%;
+        }
+        
+        /* Responsive Styles */
+        @media (min-width: 768px) {
+            .use-case-item {
+                flex-direction: row;
+                align-items: center;
+            }
+            
+            .use-case-info {
+                flex: 1;
+            }
+            
+            .use-case-demo {
+                flex: 1;
+                min-width: 400px;
+            }
+        }
+        
+        @media (max-width: 767px) {
+            .use-case-item {
+                padding: 30px;
+            }
+            
+            .use-case-title {
+                font-size: 24px;
+            }
+            
+            .use-case-number {
+                font-size: 80px;
+                top: 10px;
+                right: 20px;
+            }
+            
+            .use-case-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+            
+            .use-case-demo {
+                padding: 20px;
+            }
+        }
+
+        /* Use case demonstrations */
+        .use-case-demo-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+            visibility: hidden;
+        }
+
+        .use-case-demo-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+            visibility: visible;
+        }
+
+        .use-case-demo-container {
+            width: 90%;
+            max-width: 900px;
+            height: 80vh;
+            max-height: 600px;
+            background: rgba(20, 20, 20, 0.9);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .use-case-demo-header {
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .use-case-demo-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .use-case-demo-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .use-case-demo-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .use-case-demo-close::before, .use-case-demo-close::after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 2px;
+            background: white;
+        }
+
+        .use-case-demo-close::before {
+            transform: rotate(45deg);
+        }
+
+        .use-case-demo-close::after {
+            transform: rotate(-45deg);
+        }
+
+        .use-case-demo-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .use-case-demo-prompt {
+            background: rgba(40, 40, 40, 0.8);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .use-case-demo-prompt-icon {
+            margin-right: 1rem;
+            font-size: 1.2rem;
+            color: #4ECDC4;
+        }
+
+        .use-case-demo-prompt-text {
+            color: rgba(255, 255, 255, 0.9);
+            font-family: monospace;
+            font-size: 1rem;
+        }
+
+        .use-case-demo-stage {
+            flex: 1;
+            background: rgba(15, 15, 15, 0.7);
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Demo 1: Change Animation */
+        .demo-change-container {
+            width: 300px;
+            height: 300px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .demo-change-shape {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .demo-change-controls {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .demo-change-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .demo-change-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .demo-change-button.active {
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+        }
+
+        /* Demo 2: Apply Animation */
+        .demo-apply-container {
+            width: 400px;
+            height: 300px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .demo-apply-elements {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .demo-apply-element {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .demo-apply-element.active {
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+        }
+
+        .demo-apply-prompt {
+            width: 100%;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        /* Demo 3: Random Animation */
+        .demo-random-container {
+            width: 400px;
+            height: 300px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .demo-random-stage {
+            width: 200px;
+            height: 200px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .demo-random-element {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            position: absolute;
+        }
+
+        .demo-random-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .demo-random-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .demo-random-button i {
+            font-size: 1.2rem;
+        }
+
+        /* New styles for the updated use cases section */
+        .use-cases-container {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Logo Animation Styles */
+        #logo-animation {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 150px;
+        }
+        
+        .logo-path {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+        }
+        
+        .logo-text {
+            opacity: 0;
+        }
+        
+        /* Graph Animation Styles */
+        #graph-animation {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+        }
+        
+        .data-line {
+            stroke-dasharray: 500;
+            stroke-dashoffset: 500;
+        }
+        
+        .data-point {
+            opacity: 0;
+            transform-origin: center;
+        }
+        
+        /* Text Animation Styles */
+        #text-animation {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 150px;
+        }
+        
+        .text-container {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .text-char {
+            display: inline-block;
+            font-size: 36px;
+            font-weight: bold;
+            color: white;
+            opacity: 0;
+            transform: translateY(20px);
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        // Add footer styles
+        .footer {
+            background: #0a0a0a;
+            padding: 4rem 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3rem;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .footer-logo-icon {
+            font-size: 2rem;
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .footer-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .footer-section h3 {
+            color: #fff;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .footer-section a:hover {
+            color: #4ECDC4;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .footer-social a {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .footer-social a:hover {
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles"></div>
+    <div class="animation-canvas">
+        <div class="morphing-shapes"></div>
+    </div>
+    <nav>
+        <div class="logo">
+            <span class="logo-icon">⬡</span>
+            Agentimate
+        </div>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#examples">Examples</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#login">Sign in</a>
+        </div>
+    </nav>
+
+    <main class="hero">
+        <div class="gradient-heart">♥</div>
+        <h1 class="main-title">Idea to design in seconds.</h1>
+        <p class="subtitle">Agentimate is your superhuman design engineer.</p>
+        
+        <a href="#get-started" class="cta-button">
+            Get Started Now
+        </a>
+
+        <div class="features">
+            <div class="feature">UI Design</div>
+            <div class="feature">Brand Identity</div>
+            <div class="feature">Motion Graphics</div>
+            <div class="feature">Web Design</div>
+        </div>
+    </main>
+
+    <section class="showcase-section">
+        <div class="showcase-container">
+            <div class="showcase-item active">
+                <div class="demo-description">"Create a dynamic grid that pulses from the center"</div>
+                <div class="demo-grid">
+                    <!-- Grid items will be added by JS -->
+                </div>
+            </div>
+            <div class="showcase-item">
+                <div class="demo-description">"Design a shape that morphs organically"</div>
+                <div class="demo-morph"></div>
+            </div>
+            <div class="showcase-item">
+                <div class="demo-description">"Animate a flowing line that draws itself"</div>
+                <div class="demo-path">
+                    <svg viewBox="0 0 600 300">
+                        <defs>
+                            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#FF6B6B" />
+                                <stop offset="100%" style="stop-color:#4ECDC4" />
+                            </linearGradient>
+                        </defs>
+                        <path d="M 50 150 C 100 50, 200 50, 250 150 S 400 250, 450 150 S 600 50, 650 150" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials-section">
+        <h2 class="section-title">Loved by thousands of designers</h2>
+        
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <p class="testimonial-text">"I absolutely LOVE your product! It is the single best thing that I experienced since I found Agentimate! The value that you create with this is just over the top mind-blowing as it basically replaces or enhances a ton of Design-Solutions in an instant."</p>
+                <div class="testimonial-author">Thomas</div>
+            </div>
+            
+            <div class="testimonial-card">
+                <p class="testimonial-text">"Agentimate empowers me to create designs that surpass my own technical limitations. It allows me to swiftly develop prototypes to showcase to clients, without the need for generic templates or starting from scratch. Essentially, it enables me to concentrate on the backend while Agentimate efficiently generates a functional and visually appealing frontend my clients will love."</p>
+                <div class="testimonial-author">Marius - Veloforce</div>
+            </div>
+            
+            <div class="testimonial-card">
+                <p class="testimonial-text">"Of all the products that I've tried, the services, the software your guys was the one that was legit & true to its word with no fuss around, shady subscription and/or code stacks, which I really really like and I totally understand you guys are an alpha and the apps are simple but it's light years ahead in my opinion and experience!!"</p>
+                <div class="testimonial-author">Patrick S.</div>
+            </div>
+            
+            <div class="testimonial-card">
+                <p class="testimonial-text">"Agentimate is hands down the best tool I've ever used. It's like a super senior dev who shares his tricks with you. For the first time, I can build designs without the headache. It's so much fun to use and gets me results in a heartbeat. Love it!"</p>
+                <div class="testimonial-author">Karim</div>
+            </div>
+            
+            <div class="testimonial-card">
+                <p class="testimonial-text">"Hi Anton, I just wanted to drop you a quick note to say how amazing Agentimate is. I'm truly impressed by its quality, accuracy, speed, and how easy it is to use. It's a standout compared to anything else out there, and I'm genuinely excited to keep using it and see how it develops. Thank you so much for giving me the chance to use it during the Alpha stage - I feel really lucky to have this opportunity!"</p>
+                <div class="testimonial-author">Ray B.</div>
+            </div>
+            
+            <div class="testimonial-card">
+                <p class="testimonial-text">"I tried Agentimate yesterday, and it was amazing. I had to build a showcase for our own AI model. One prompt was enough to get a solid UI, and after a few iterations it was connected to our API."</p>
+                <div class="testimonial-author">Daniel</div>
+            </div>
+        </div>
+    </section>
+
+    <div class="page-break">
+        <div class="page-break-icon"></div>
+    </div>
+
+    <!-- Use Cases Section -->
+    <section class="use-cases-section" id="use-cases">
+        <div class="container">
+            <h2 class="section-title">Use Cases</h2>
+            
+            <div class="use-cases-container">
+                <!-- Use Case 1: Logo Animation -->
+                <div class="use-case-item">
+                    <div class="use-case-info">
+                        <div class="use-case-header">
+                            <div class="use-case-icon">
+                                <i class="fas fa-signature"></i>
+                            </div>
+                            <h3 class="use-case-title">Stunning Logo Animations</h3>
+                        </div>
+                        <p class="use-case-description">Transform your static brand identity into a living, breathing entity with smooth logo animations that capture attention and communicate your brand's personality.</p>
+                        <div class="use-case-number">1</div>
+                    </div>
+                    
+                    <div class="use-case-demo">
+                        <div class="demo-prompt">Animate our logo with a modern reveal effect</div>
+                        <div class="demo-content">
+                            <div id="logo-animation">
+                                <svg width="200" height="80" viewBox="0 0 200 80">
+                                    <defs>
+                                        <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" stop-color="#FF6B6B" />
+                                            <stop offset="100%" stop-color="#4ECDC4" />
+                                        </linearGradient>
+                                    </defs>
+                                    <path class="logo-path" d="M20,40 L40,20 L60,40 L80,20 L100,40 L120,20 L140,40 L160,20 L180,40" stroke="url(#logo-gradient)" stroke-width="5" fill="none" stroke-linecap="round" />
+                                    <text class="logo-text" x="100" y="60" text-anchor="middle" font-family="Arial" font-weight="bold" font-size="24" fill="white">AGENTIMATE</text>
+                                    
+                                    <!-- For morphing animation -->
+                                    <path class="logo-morph" d="M20,40 L40,20 L60,40 L80,20 L100,40 L120,20 L140,40 L160,20 L180,40" stroke="url(#logo-gradient)" stroke-width="5" fill="none" stroke-linecap="round" opacity="0" />
+                                    
+                                    <!-- For particle animation -->
+                                    <g class="logo-particles"></g>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="demo-controls">
+                            <button class="demo-button logo-btn active" data-animation="path">Path Reveal</button>
+                            <button class="demo-button logo-btn" data-animation="morph">Morphing Logo</button>
+                            <button class="demo-button logo-btn" data-animation="particles">Particle Assembly</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Use Case 2: Data Visualization -->
+                <div class="use-case-item">
+                    <div class="use-case-info">
+                        <div class="use-case-header">
+                            <div class="use-case-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h3 class="use-case-title">Dynamic Data Visualizations</h3>
+                        </div>
+                        <p class="use-case-description">Bring your data to life with fluid, engaging animations that make complex information intuitive and memorable for your audience.</p>
+                        <div class="use-case-number">2</div>
+                    </div>
+                    
+                    <div class="use-case-demo">
+                        <div class="demo-prompt">Create an animated growth chart with smooth transitions</div>
+                        <div class="demo-content">
+                            <div id="graph-animation">
+                                <!-- Line Graph (Default) -->
+                                <svg width="300" height="200" viewBox="0 0 300 200" class="graph-line">
+                                    <defs>
+                                        <linearGradient id="area-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" stop-color="#4ECDC4" stop-opacity="0.7" />
+                                            <stop offset="100%" stop-color="#4ECDC4" stop-opacity="0.1" />
+                                        </linearGradient>
+                                    </defs>
+                                    <!-- Grid lines -->
+                                    <g class="grid-lines">
+                                        <line x1="40" y1="20" x2="40" y2="160" stroke="#333" stroke-width="1" />
+                                        <line x1="40" y1="160" x2="280" y2="160" stroke="#333" stroke-width="1" />
+                                        
+                                        <line x1="40" y1="120" x2="280" y2="120" stroke="#333" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="4" />
+                                        <line x1="40" y1="80" x2="280" y2="80" stroke="#333" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="4" />
+                                        <line x1="40" y1="40" x2="280" y2="40" stroke="#333" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="4" />
+                                        
+                                        <text x="35" y="160" text-anchor="end" font-size="10" fill="#888">0</text>
+                                        <text x="35" y="120" text-anchor="end" font-size="10" fill="#888">25</text>
+                                        <text x="35" y="80" text-anchor="end" font-size="10" fill="#888">50</text>
+                                        <text x="35" y="40" text-anchor="end" font-size="10" fill="#888">75</text>
+                                    </g>
+                                    
+                                    <!-- Data line -->
+                                    <path class="data-line" d="M40,140 L80,120 L120,130 L160,90 L200,70 L240,40 L280,30" stroke="#FF6B6B" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+                                    
+                                    <!-- Area under the line -->
+                                    <path class="data-area" d="M40,140 L80,120 L120,130 L160,90 L200,70 L240,40 L280,30 L280,160 L40,160 Z" fill="url(#area-gradient)" opacity="0" />
+                                    
+                                    <!-- Data points -->
+                                    <circle class="data-point" cx="40" cy="140" r="5" fill="#FF6B6B" />
+                                    <circle class="data-point" cx="80" cy="120" r="5" fill="#FF6B6B" />
+                                    <circle class="data-point" cx="120" cy="130" r="5" fill="#FF6B6B" />
+                                    <circle class="data-point" cx="160" cy="90" r="5" fill="#FF6B6B" />
+                                    <circle class="data-point" cx="200" cy="70" r="5" fill="#FF6B6B" />
+                                    <circle class="data-point" cx="240" cy="40" r="5" fill="#FF6B6B" />
+                                    <circle class="data-point" cx="280" cy="30" r="5" fill="#FF6B6B" />
+                                </svg>
+                                
+                                <!-- Gauge Visualization -->
+                                <svg width="200" height="200" viewBox="0 0 200 200" class="graph-gauge" style="display: none;">
+                                    <defs>
+                                        <linearGradient id="gauge-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" stop-color="#FF6B6B" />
+                                            <stop offset="100%" stop-color="#4ECDC4" />
+                                        </linearGradient>
+                                    </defs>
+                                    <!-- Gauge background -->
+                                    <circle cx="100" cy="100" r="80" fill="none" stroke="#333" stroke-width="10" />
+                                    
+                                    <!-- Gauge fill -->
+                                    <path class="gauge-fill" d="M 100 100 L 100 20 A 80 80 0 0 1 180 100 Z" fill="url(#gauge-gradient)" opacity="0" />
+                                    
+                                    <!-- Gauge needle -->
+                                    <line class="gauge-needle" x1="100" y1="100" x2="100" y2="30" stroke="#fff" stroke-width="2" transform="rotate(0, 100, 100)" />
+                                    
+                                    <!-- Gauge center -->
+                                    <circle cx="100" cy="100" r="10" fill="#fff" />
+                                    
+                                    <!-- Gauge text -->
+                                    <text class="gauge-text" x="100" y="140" text-anchor="middle" font-size="24" fill="#fff" opacity="0">75%</text>
+                                </svg>
+                                
+                                <!-- 3D Data Terrain -->
+                                <div class="graph-3d" style="display: none; width: 200px; height: 200px; position: relative;">
+                                    <div class="terrain-container" style="width: 100%; height: 100%; perspective: 800px;">
+                                        <div class="terrain" style="width: 100%; height: 100%; transform-style: preserve-3d; transform: rotateX(60deg) rotateZ(0deg);">
+                                            <!-- 3D terrain elements will be added by JS -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="demo-controls">
+                            <button class="demo-button graph-btn active" data-graph="line">Line Graph</button>
+                            <button class="demo-button graph-btn" data-graph="gauge">Gauge Meter</button>
+                            <button class="demo-button graph-btn" data-graph="3d">3D Terrain</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Use Case 3: Text Transformations -->
+                <div class="use-case-item">
+                    <div class="use-case-info">
+                        <div class="use-case-header">
+                            <div class="use-case-icon">
+                                <i class="fas fa-font"></i>
+                            </div>
+                            <h3 class="use-case-title">Creative Text Animations</h3>
+                        </div>
+                        <p class="use-case-description">Elevate your typography with eye-catching text animations that enhance readability and create memorable user experiences.</p>
+                        <div class="use-case-number">3</div>
+                    </div>
+                    
+                    <div class="use-case-demo">
+                        <div class="demo-prompt">Create a staggered text reveal with a modern feel</div>
+                        <div class="demo-content">
+                            <div id="text-animation">
+                                <!-- Character Stagger (Default) -->
+                                <div class="text-container stagger-text">
+                                    <span class="text-char">T</span>
+                                    <span class="text-char">R</span>
+                                    <span class="text-char">A</span>
+                                    <span class="text-char">N</span>
+                                    <span class="text-char">S</span>
+                                    <span class="text-char">F</span>
+                                    <span class="text-char">O</span>
+                                    <span class="text-char">R</span>
+                                    <span class="text-char">M</span>
+                                </div>
+                                
+                                <!-- Typewriter Effect -->
+                                <div class="text-container typewriter-text" style="display: none;">
+                                    <div class="typewriter-wrapper">
+                                        <span class="typewriter-line">Coding animations</span>
+                                        <span class="typewriter-cursor">|</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Kinetic Typography -->
+                                <div class="text-container kinetic-text" style="display: none;">
+                                    <div class="kinetic-word">
+                                        <span class="kinetic-char">M</span>
+                                        <span class="kinetic-char">O</span>
+                                        <span class="kinetic-char">T</span>
+                                        <span class="kinetic-char">I</span>
+                                        <span class="kinetic-char">O</span>
+                                        <span class="kinetic-char">N</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="demo-controls">
+                            <button class="demo-button text-btn active" data-text="stagger">Character Stagger</button>
+                            <button class="demo-button text-btn" data-text="typewriter">Typewriter</button>
+                            <button class="demo-button text-btn" data-text="kinetic">Kinetic Typography</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Create interactive animation background
+        const morphingShapes = document.querySelector('.morphing-shapes');
+        const numShapes = 50;
+        const shapes = [];
+        const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96C93D', '#FED766'];
+
+        for (let i = 0; i < numShapes; i++) {
+            const shape = document.createElement('div');
+            shape.className = 'shape';
+            shape.style.transform = `translate(${anime.random(-50, 50)}vw, ${anime.random(-50, 50)}vh)`;
+            morphingShapes.appendChild(shape);
+            shapes.push(shape);
+        }
+
+        // Create grid demo with proper styling
+        const demoGrid = document.querySelector('.demo-grid');
+        for (let i = 0; i < 100; i++) {
+            const gridItem = document.createElement('div');
+            gridItem.className = 'grid-item';
+            
+            // Calculate position for gradient
+            const row = Math.floor(i / 10);
+            const col = i % 10;
+            const distanceFromCenter = Math.sqrt(
+                Math.pow(row - 4.5, 2) + Math.pow(col - 4.5, 2)
+            );
+            const maxDistance = Math.sqrt(Math.pow(4.5, 2) + Math.pow(4.5, 2));
+            const colorRatio = distanceFromCenter / maxDistance;
+            
+            // Interpolate between the gradient colors
+            const startColor = [255, 107, 107]; // #FF6B6B
+            const endColor = [78, 205, 196];    // #4ECDC4
+            
+            const r = Math.round(startColor[0] + (endColor[0] - startColor[0]) * colorRatio);
+            const g = Math.round(startColor[1] + (endColor[1] - startColor[1]) * colorRatio);
+            const b = Math.round(startColor[2] + (endColor[2] - startColor[2]) * colorRatio);
+            
+            gridItem.style.backgroundColor = `rgb(${r},${g},${b})`;
+            demoGrid.appendChild(gridItem);
+        }
+
+        function animateGridDemo() {
+            anime({
+                targets: '.demo-grid .grid-item',
+                scale: [
+                    {value: 0.1, duration: 800, easing: 'easeOutQuad'},
+                    {value: 1, duration: 1200, easing: 'easeInOutQuad'}
+                ],
+                opacity: [
+                    {value: 0.3, duration: 800},
+                    {value: 1, duration: 1200}
+                ],
+                delay: anime.stagger(80, {
+                    grid: [10, 10],
+                    from: 'center'
+                }),
+                endDelay: 1000,
+                direction: 'alternate',
+                loop: true
+            });
+        }
+
+        // Create particle effect with improved visuals
+        const particlesContainer = document.querySelector('.particles');
+        for (let i = 0; i < 50; i++) {
+            const particle = document.createElement('div');
+            particle.style.cssText = `
+                position: absolute;
+                width: 2px;
+                height: 2px;
+                background: rgba(255, 255, 255, 0.5);
+                pointer-events: none;
+                border-radius: 50%;
+                left: ${Math.random() * 100}%;
+                top: ${Math.random() * 100}%;
+            `;
+            particlesContainer.appendChild(particle);
+        }
+
+        // Animate particles with more dynamic movement
+        anime({
+            targets: '.particles div',
+            translateY: function() {
+                return anime.random(-300, 300);
+            },
+            translateX: function() {
+                return anime.random(-300, 300);
+            },
+            scale: function() {
+                return anime.random(1, 3);
+            },
+            opacity: [0.5, 0],
+            easing: 'easeOutExpo',
+            duration: function() {
+                return anime.random(3000, 8000);
+            },
+            delay: function() {
+                return anime.random(0, 1000);
+            },
+            loop: true
+        });
+
+        // Animate morphing shapes
+        function animateShape(el, index) {
+            const delay = index * 150;
+            const duration = 6000;
+            
+            anime({
+                targets: el,
+                translateX: () => anime.random(-50, 50) + 'vw',
+                translateY: () => anime.random(-50, 50) + 'vh',
+                scale: () => anime.random(0.5, 2),
+                borderRadius: () => anime.random(0, 50) + '%',
+                backgroundColor: () => colors[anime.random(0, colors.length - 1)],
+                opacity: [0.1, 0.3],
+                duration: duration,
+                delay: delay,
+                easing: 'easeInOutQuad',
+                complete: function() {
+                    animateShape(el, index);
+                }
+            });
+        }
+
+        shapes.forEach((shape, index) => {
+            animateShape(shape, index);
+        });
+
+        // Interactive animation on mouse move
+        let mouseX = 0;
+        let mouseY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+
+            shapes.forEach((shape, index) => {
+                const dx = mouseX - window.innerWidth / 2;
+                const dy = mouseY - window.innerHeight / 2;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                const maxDistance = Math.sqrt(window.innerWidth * window.innerWidth + window.innerHeight * window.innerHeight) / 2;
+                const scale = 1 - (distance / maxDistance);
+
+                anime({
+                    targets: shape,
+                    scale: 0.5 + scale,
+                    duration: 1000,
+                    easing: 'easeOutElastic(1, .5)'
+                });
+            });
+        });
+
+        // Logo animation
+        anime({
+            targets: '.logo',
+            translateY: [-30, 0],
+            opacity: [0, 1],
+            duration: 2000,
+            easing: 'easeOutElastic(1, .8)'
+        });
+
+        // Animate navigation links with stagger and elastic effect
+        anime({
+            targets: '.nav-links a',
+            translateY: [-50, 0],
+            opacity: [0, 1],
+            delay: anime.stagger(150, {start: 500}),
+            duration: 2000,
+            easing: 'easeOutElastic(1, .8)'
+        });
+
+        // Main title animation
+        anime({
+            targets: '.main-title',
+            opacity: [0, 1],
+            translateY: [-50, 0],
+            duration: 2500,
+            easing: 'easeOutExpo',
+            delay: 800
+        });
+
+        // Subtitle animation
+        anime({
+            targets: '.subtitle',
+            opacity: [0, 1],
+            translateY: [-20, 0],
+            duration: 2000,
+            delay: 1200,
+            easing: 'easeOutExpo'
+        });
+
+        // CTA button animation
+        anime({
+            targets: '.cta-button',
+            opacity: [0, 1],
+            translateY: [20, 0],
+            duration: 1500,
+            delay: 1600,
+            easing: 'easeOutExpo'
+        });
+
+        // Features animation with stagger and scale
+        anime({
+            targets: '.features .feature',
+            scale: [0.5, 1],
+            opacity: [0, 1],
+            delay: anime.stagger(200, {start: 2000}),
+            duration: 2000,
+            easing: 'easeOutElastic(1, .8)'
+        });
+
+        // Add hover effects for interactive elements
+        document.querySelectorAll('.feature').forEach(feature => {
+            feature.addEventListener('mouseenter', () => {
+                anime({
+                    targets: feature,
+                    scale: 1.05,
+                    duration: 400,
+                    easing: 'easeOutElastic(1, .8)'
+                });
+            });
+            
+            feature.addEventListener('mouseleave', () => {
+                anime({
+                    targets: feature,
+                    scale: 1,
+                    duration: 400,
+                    easing: 'easeOutElastic(1, .8)'
+                });
+            });
+        });
+
+        // Showcase animations
+        const showcaseItems = document.querySelectorAll('.showcase-item');
+        let currentDemo = 0;
+
+        function animateMorphDemo() {
+            anime({
+                targets: '.demo-morph',
+                borderRadius: [
+                    '30% 70% 70% 30% / 30% 30% 70% 70%',
+                    '70% 30% 30% 70% / 70% 70% 30% 30%',
+                    '30% 70% 70% 30% / 30% 30% 70% 70%'
+                ],
+                scale: [1, 1.15, 1], /* Reduced max scale from 1.2 to 1.15 for the larger shape */
+                rotate: [0, 360],
+                duration: 5000, /* Increased from 4000 for smoother animation */
+                easing: 'easeInOutQuad',
+                loop: true
+            });
+        }
+
+        function animatePathDemo() {
+            anime({
+                targets: '.demo-path path',
+                strokeDashoffset: [anime.setDashoffset, 0],
+                easing: 'easeInOutSine',
+                duration: 3000,
+                delay: function(el, i) { return i * 350 },
+                direction: 'alternate',
+                loop: true
+            });
+        }
+
+        // Initialize first demo
+        animateGridDemo();
+
+        // Auto-advance demos with smoother transitions
+        function switchDemo() {
+            showcaseItems[currentDemo].classList.remove('active');
+            anime.remove(['.demo-grid .grid-item', '.demo-morph', '.demo-path path']);
+            currentDemo = (currentDemo + 1) % 3;
+            
+            setTimeout(() => {
+                showcaseItems[currentDemo].classList.add('active');
+                switch(currentDemo) {
+                    case 0:
+                        animateGridDemo();
+                        break;
+                    case 1:
+                        animateMorphDemo();
+                        break;
+                    case 2:
+                        animatePathDemo();
+                        break;
+                }
+            }, 500);
+        }
+
+        setInterval(switchDemo, 5000);
+
+        // Testimonial animations
+        function animateTestimonials() {
+            anime({
+                targets: '.testimonial-card',
+                translateY: [30, 0],
+                opacity: [0, 1],
+                delay: anime.stagger(150, {start: 300}),
+                duration: 1500,
+                easing: 'easeOutExpo',
+                begin: function() {
+                    document.querySelectorAll('.testimonial-card').forEach(card => {
+                        card.style.transform = 'translateY(30px)';
+                        card.style.opacity = '0';
+                    });
+                }
+            });
+        }
+
+        // Intersection Observer for testimonials section
+        const testimonialsSection = document.querySelector('.testimonials-section');
+        const testimonialObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateTestimonials();
+                    testimonialObserver.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.2
+        });
+
+        testimonialObserver.observe(testimonialsSection);
+
+        // Use cases animations
+        function animateUseCases() {
+            anime({
+                targets: '.use-case-item',
+                translateY: [30, 0],
+                opacity: [0, 1],
+                delay: anime.stagger(200, {start: 300}),
+                duration: 1500,
+                easing: 'easeOutExpo',
+                begin: function() {
+                    document.querySelectorAll('.use-case-item').forEach(card => {
+                        card.style.transform = 'translateY(30px)';
+                        card.style.opacity = '0';
+                    });
+                }
+            });
+        }
+
+        // Intersection Observer for use cases section
+        const useCasesSection = document.querySelector('.use-cases-section');
+        const useCasesObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateUseCases();
+                    
+                    // Initialize all demos when they come into view
+                    setTimeout(() => {
+                        initChangeDemo();
+                        initApplyDemo();
+                        initRandomDemo();
+                    }, 1000); // Delay to ensure animations are complete
+                    
+                    useCasesObserver.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.2
+        });
+
+        useCasesObserver.observe(useCasesSection);
+
+        // Page break animation
+        const pageBreak = document.querySelector('.page-break');
+        const pageBreakObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    anime({
+                        targets: '.page-break-icon',
+                        scale: [0, 1],
+                        rotate: [180, 0],
+                        opacity: [0, 1],
+                        duration: 1200,
+                        easing: 'easeOutElastic(1, .5)'
+                    });
+                    
+                    anime({
+                        targets: '.page-break::before',
+                        width: ['0%', '100%'],
+                        opacity: [0, 1],
+                        duration: 1500,
+                        easing: 'easeInOutQuad'
+                    });
+                    
+                    pageBreakObserver.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.5
+        });
+
+        pageBreakObserver.observe(pageBreak);
+
+        // Add hover effects for use case cards
+        document.querySelectorAll('.use-case-item').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                anime({
+                    targets: card,
+                    boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)',
+                    backgroundColor: 'rgba(40, 40, 40, 0.8)',
+                    duration: 400,
+                    easing: 'easeOutQuad'
+                });
+                
+                // Animate the number
+                anime({
+                    targets: card.querySelector('.use-case-number'),
+                    opacity: [0.1, 0.2],
+                    scale: 1.1,
+                    duration: 400,
+                    easing: 'easeOutQuad'
+                });
+                
+                // Animate the icon
+                anime({
+                    targets: card.querySelector('.use-case-icon'),
+                    scale: 1.1,
+                    rotate: 5,
+                    duration: 400,
+                    easing: 'easeOutElastic(1, .8)'
+                });
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                anime({
+                    targets: card,
+                    boxShadow: '0 15px 35px rgba(0, 0, 0, 0.2)',
+                    backgroundColor: 'rgba(30, 30, 30, 0.7)',
+                    duration: 400,
+                    easing: 'easeOutQuad'
+                });
+                
+                // Reset the number
+                anime({
+                    targets: card.querySelector('.use-case-number'),
+                    opacity: 0.1,
+                    scale: 1,
+                    duration: 400,
+                    easing: 'easeOutQuad'
+                });
+                
+                // Reset the icon
+                anime({
+                    targets: card.querySelector('.use-case-icon'),
+                    scale: 1,
+                    rotate: 0,
+                    duration: 400,
+                    easing: 'easeOutElastic(1, .8)'
+                });
+            });
+        });
+
+        // Demo 1: Change Animation
+        function initChangeDemo() {
+            const shape = document.getElementById('change-shape');
+            const buttons = document.querySelectorAll('.demo-change-button');
+            const promptText = document.getElementById('change-prompt');
+            
+            // Set initial animation
+            animateShape('bounce');
+            
+            // Button click handlers
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const animation = button.getAttribute('data-animation');
+                    
+                    // Update active button
+                    buttons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    
+                    // Update prompt text
+                    updatePromptText(animation);
+                    
+                    // Apply animation
+                    animateShape(animation);
+                });
+            });
+            
+            function updatePromptText(animation) {
+                const prompts = {
+                    bounce: 'Make it bounce like a rubber ball',
+                    spin: 'Make it spin in 3D space',
+                    pulse: 'Make it pulse like a heartbeat',
+                    shake: 'Make it shake like it\'s vibrating'
+                };
+                
+                promptText.textContent = prompts[animation];
+                
+                // Animate the prompt text change
+                anime({
+                    targets: promptText,
+                    opacity: [0.5, 1],
+                    duration: 300,
+                    easing: 'easeOutQuad'
+                });
+            }
+            
+            function animateShape(animation) {
+                // Stop any ongoing animation
+                anime.remove(shape);
+                
+                // Reset shape
+                shape.style.transform = '';
+                
+                // Apply the selected animation
+                switch(animation) {
+                    case 'bounce':
+                        anime({
+                            targets: shape,
+                            translateY: [0, -50, 0],
+                            scale: [1, 0.9, 1],
+                            duration: 1500,
+                            easing: 'easeInOutQuad',
+                            loop: true
+                        });
+                        break;
+                    case 'spin':
+                        anime({
+                            targets: shape,
+                            rotateY: '360deg',
+                            duration: 2000,
+                            easing: 'easeInOutSine',
+                            loop: true
+                        });
+                        break;
+                    case 'pulse':
+                        anime({
+                            targets: shape,
+                            scale: [1, 1.2, 1],
+                            opacity: [1, 0.8, 1],
+                            duration: 1000,
+                            easing: 'easeInOutQuad',
+                            loop: true
+                        });
+                        break;
+                    case 'shake':
+                        anime({
+                            targets: shape,
+                            translateX: [0, -5, 5, -5, 5, 0],
+                            duration: 500,
+                            easing: 'easeInOutSine',
+                            loop: true
+                        });
+                        break;
+                }
+            }
+        }
+        
+        // Demo 2: Apply Animation
+        function initApplyDemo() {
+            const elements = document.querySelectorAll('.demo-apply-element');
+            const promptText = document.getElementById('apply-prompt');
+            
+            elements.forEach(element => {
+                element.addEventListener('click', () => {
+                    const index = element.getAttribute('data-index');
+                    
+                    // Update prompt based on element
+                    const elementType = element.textContent;
+                    promptText.textContent = `Apply a ${getRandomEffect()} animation to the ${elementType}`;
+                    
+                    // Animate the prompt text change
+                    anime({
+                        targets: promptText,
+                        opacity: [0.5, 1],
+                        duration: 300,
+                        easing: 'easeOutQuad'
+                    });
+                    
+                    // Apply a random animation to the clicked element
+                    applyRandomAnimation(element);
+                });
+            });
+            
+            function getRandomEffect() {
+                const effects = ['staggered fade-in', 'bounce', 'slide-in', 'zoom', 'flip', 'glitch'];
+                return effects[Math.floor(Math.random() * effects.length)];
+            }
+            
+            function applyRandomAnimation(element) {
+                // Stop any ongoing animation
+                anime.remove(element);
+                
+                // Reset element
+                element.style.transform = '';
+                element.classList.add('active');
+                
+                // Apply a random animation
+                const animations = [
+                    // Fade in with scale
+                    {
+                        opacity: [0, 1],
+                        scale: [0.5, 1],
+                        duration: 800,
+                        easing: 'easeOutElastic(1, .5)'
+                    },
+                    // Slide in from top
+                    {
+                        translateY: [-30, 0],
+                        opacity: [0, 1],
+                        duration: 600,
+                        easing: 'easeOutQuad'
+                    },
+                    // Rotate in
+                    {
+                        rotateZ: [90, 0],
+                        opacity: [0, 1],
+                        duration: 800,
+                        easing: 'easeOutElastic(1, .5)'
+                    },
+                    // Bounce
+                    {
+                        translateY: [30, -10, 5, -2, 0],
+                        opacity: [0, 1],
+                        duration: 1200,
+                        easing: 'easeOutElastic(1, .5)'
+                    }
+                ];
+                
+                const randomAnimation = animations[Math.floor(Math.random() * animations.length)];
+                
+                anime({
+                    targets: element,
+                    ...randomAnimation,
+                    complete: function() {
+                        setTimeout(() => {
+                            // Reset after animation
+                            anime({
+                                targets: element,
+                                opacity: [1, 0.5, 1],
+                                scale: [1, 0.95, 1],
+                                duration: 600,
+                                easing: 'easeInOutQuad',
+                                complete: function() {
+                                    element.classList.remove('active');
+                                }
+                            });
+                        }, 1000);
+                    }
+                });
+            }
+        }
+        
+        // Demo 3: Random Animation
+        function initRandomDemo() {
+            const element = document.getElementById('random-element');
+            const button = document.getElementById('random-button');
+            const promptText = document.getElementById('random-prompt');
+            
+            // Set initial shape
+            element.style.borderRadius = '50%';
+            
+            // Apply initial animation
+            applyRandomAnimation();
+            
+            // Button click handler
+            button.addEventListener('click', () => {
+                // Update prompt with random creative prompt
+                updateRandomPrompt();
+                
+                // Apply a new random animation
+                applyRandomAnimation();
+            });
+            
+            function updateRandomPrompt() {
+                const prompts = [
+                    'Surprise me with a creative animation',
+                    'Show me something unexpected',
+                    'Create a playful motion',
+                    'Generate a unique animation',
+                    'Make it move in an interesting way',
+                    'Animate it like I\'ve never seen before'
+                ];
+                
+                const newPrompt = prompts[Math.floor(Math.random() * prompts.length)];
+                promptText.textContent = newPrompt;
+                
+                // Animate the prompt text change
+                anime({
+                    targets: promptText,
+                    opacity: [0.5, 1],
+                    duration: 300,
+                    easing: 'easeOutQuad'
+                });
+            }
+            
+            function applyRandomAnimation() {
+                // Stop any ongoing animation
+                anime.remove(element);
+                
+                // Reset element
+                element.style.transform = '';
+                
+                // Generate random shape
+                const shapes = [
+                    '50%', // Circle
+                    '0%', // Square
+                    '30% 70% 70% 30% / 30% 30% 70% 70%', // Blob 1
+                    '50% 0% 50% 50% / 50% 0% 50% 50%', // Triangle-ish
+                    '20% 80% 20% 80% / 80% 20% 80% 20%' // Star-ish
+                ];
+                
+                const randomShape = shapes[Math.floor(Math.random() * shapes.length)];
+                
+                // Generate random animation
+                const animations = [
+                    // Morphing shape
+                    {
+                        borderRadius: [randomShape, '50%', randomShape],
+                        rotate: [0, 360],
+                        scale: [1, 1.2, 0.8, 1],
+                        duration: 3000,
+                        easing: 'easeInOutQuad'
+                    },
+                    // Bouncing with path
+                    {
+                        translateX: [0, 30, -30, 0],
+                        translateY: [0, -20, 20, 0],
+                        rotate: [0, 180, 360],
+                        duration: 2500,
+                        easing: 'easeInOutSine'
+                    },
+                    // Elastic pulse
+                    {
+                        scale: [1, 1.5, 0.5, 1.2, 0.8, 1],
+                        borderRadius: ['50%', '0%', '50%'],
+                        duration: 2000,
+                        easing: 'easeInOutElastic(1, .5)'
+                    },
+                    // 3D flip
+                    {
+                        rotateY: [0, 180, 360],
+                        scale: [1, 0.8, 1],
+                        duration: 2000,
+                        easing: 'easeInOutQuad'
+                    },
+                    // Particle explosion (simulated)
+                    {
+                        scale: [1, 0.1, 1.5, 1],
+                        opacity: [1, 0.5, 1],
+                        borderRadius: ['0%', '50%', '0%'],
+                        duration: 2000,
+                        easing: 'easeOutElastic(1, .5)'
+                    }
+                ];
+                
+                const randomAnimation = animations[Math.floor(Math.random() * animations.length)];
+                
+                // Apply animation with loop
+                anime({
+                    targets: element,
+                    ...randomAnimation,
+                    loop: true
+                });
+                
+                // Animate the button
+                anime({
+                    targets: button,
+                    scale: [1, 1.1, 1],
+                    duration: 400,
+                    easing: 'easeOutElastic(1, .5)'
+                });
+            }
+        }
+
+        // Initialize demos when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded, initializing demos');
+            
+            // Make sure all demo elements are created
+            const changeShape = document.getElementById('change-shape');
+            const applyElements = document.querySelectorAll('.demo-apply-element');
+            const randomElement = document.getElementById('random-element');
+            
+            console.log('Demo elements:', {
+                changeShape,
+                applyElements,
+                randomElement
+            });
+        });
+
+        // Close overlay with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                console.log('Escape key pressed');
+                const activeOverlay = document.querySelector('.use-case-demo-overlay.active');
+                if (activeOverlay) {
+                    console.log('Closing active overlay');
+                    activeOverlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                    
+                    // Stop any ongoing animations
+                    anime.remove('#change-shape');
+                    anime.remove('.demo-apply-element');
+                    anime.remove('#random-element');
+                }
+            }
+        });
+
+        // Add this to your existing script section
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize all animations
+            initLogoAnimation('path');
+            initGraphAnimation('line');
+            initTextAnimation('stagger');
+            
+            // Set up logo animation buttons
+            document.querySelectorAll('.logo-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Update active button
+                    document.querySelectorAll('.logo-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Run animation
+                    initLogoAnimation(this.getAttribute('data-animation'));
+                });
+            });
+            
+            // Set up graph animation buttons
+            document.querySelectorAll('.graph-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Update active button
+                    document.querySelectorAll('.graph-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Run animation
+                    initGraphAnimation(this.getAttribute('data-graph'));
+                });
+            });
+            
+            // Set up text animation buttons
+            document.querySelectorAll('.text-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Update active button
+                    document.querySelectorAll('.text-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Run animation
+                    initTextAnimation(this.getAttribute('data-text'));
+                });
+            });
+        });
+
+        // Logo Animation
+        function initLogoAnimation(type) {
+            // Hide all animations first
+            anime.set('.logo-path', { opacity: 0 });
+            anime.set('.logo-text', { opacity: 0 });
+            anime.set('.logo-morph', { opacity: 0 });
+            document.querySelector('.logo-particles').innerHTML = '';
+            
+            switch(type) {
+                case 'path':
+                    // Path reveal animation (original)
+                    anime.set('.logo-path', {
+                        opacity: 1,
+                        strokeDasharray: 1000,
+                        strokeDashoffset: 1000
+                    });
+                    
+                    anime.set('.logo-text', {
+                        opacity: 0,
+                        translateY: 20
+                    });
+                    
+                    // Animate logo path
+                    anime({
+                        targets: '.logo-path',
+                        strokeDashoffset: 0,
+                        duration: 2000,
+                        easing: 'easeInOutQuad',
+                        complete: function() {
+                            // Animate text after path is drawn
+                            anime({
+                                targets: '.logo-text',
+                                opacity: 1,
+                                translateY: 0,
+                                duration: 800,
+                                easing: 'easeOutExpo'
+                            });
+                        }
+                    });
+                    break;
+                    
+                case 'morph':
+                    // Morphing logo animation
+                    anime.set('.logo-morph', {
+                        opacity: 1,
+                        d: 'M100,20 L100,20 L100,20 L100,20 L100,20 L100,20 L100,20 L100,20 L100,20'
+                    });
+                    
+                    anime.set('.logo-text', {
+                        opacity: 0,
+                        scale: 0
+                    });
+                    
+                    // Animate morphing
+                    anime({
+                        targets: '.logo-morph',
+                        d: [
+                            {value: 'M20,60 L40,60 L60,60 L80,60 L100,60 L120,60 L140,60 L160,60 L180,60', duration: 500},
+                            {value: 'M20,40 L40,20 L60,40 L80,20 L100,40 L120,20 L140,40 L160,20 L180,40', duration: 1000}
+                        ],
+                        easing: 'easeOutElastic(1, .5)',
+                        complete: function() {
+                            anime({
+                                targets: '.logo-text',
+                                opacity: 1,
+                                scale: [0, 1.2, 1],
+                                duration: 800,
+                                easing: 'easeOutElastic(1, .5)'
+                            });
+                        }
+                    });
+                    break;
+                    
+                case 'particles':
+                    // Particle assembly animation
+                    const particleGroup = document.querySelector('.logo-particles');
+                    particleGroup.innerHTML = ''; // Clear existing particles
+                    
+                    // Create particles
+                    for (let i = 0; i < 50; i++) {
+                        const particle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                        particle.setAttribute('r', '2');
+                        particle.setAttribute('fill', i % 2 === 0 ? '#FF6B6B' : '#4ECDC4');
+                        particle.setAttribute('cx', Math.random() * 200);
+                        particle.setAttribute('cy', Math.random() * 80);
+                        particle.classList.add('logo-particle');
+                        particleGroup.appendChild(particle);
+                    }
+                    
+                    // Animate particles
+                    anime({
+                        targets: '.logo-particle',
+                        cx: function(el, i) {
+                            // Position along the path
+                            const pathPoint = i % 9;
+                            return 20 + pathPoint * 20;
+                        },
+                        cy: function(el, i) {
+                            // Alternate between top and bottom points
+                            const pathPoint = i % 9;
+                            return pathPoint % 2 === 0 ? 40 : 20;
+                        },
+                        r: 3,
+                        delay: anime.stagger(20),
+                        duration: 1500,
+                        easing: 'easeOutExpo',
+                        complete: function() {
+                            // Show the actual path
+                            anime({
+                                targets: '.logo-path',
+                                opacity: 1,
+                                duration: 500
+                            });
+                            
+                            // Show text
+                            anime({
+                                targets: '.logo-text',
+                                opacity: 1,
+                                translateY: [20, 0],
+                                delay: 300,
+                                duration: 800,
+                                easing: 'easeOutExpo'
+                            });
+                        }
+                    });
+                    break;
+            }
+        }
+
+        // Graph Animation
+        function initGraphAnimation(type) {
+            // Hide all graph types first
+            document.querySelector('.graph-line').style.display = 'none';
+            document.querySelector('.graph-gauge').style.display = 'none';
+            document.querySelector('.graph-3d').style.display = 'none';
+            
+            // Show selected graph type
+            document.querySelector('.graph-' + type).style.display = 'block';
+            
+            switch(type) {
+                case 'line':
+                    // Line graph animation (original)
+                    anime.set('.data-line', {
+                        strokeDasharray: 500,
+                        strokeDashoffset: 500
+                    });
+                    
+                    anime.set('.data-area', {
+                        opacity: 0
+                    });
+                    
+                    anime.set('.data-point', {
+                        opacity: 0,
+                        scale: 0
+                    });
+                    
+                    // Animate line
+                    anime({
+                        targets: '.data-line',
+                        strokeDashoffset: 0,
+                        duration: 2000,
+                        easing: 'easeInOutSine',
+                        delay: 300
+                    });
+                    
+                    // Animate points
+                    anime({
+                        targets: '.data-point',
+                        opacity: [0, 1],
+                        scale: [0, 1],
+                        delay: anime.stagger(300, {start: 300}),
+                        duration: 600,
+                        easing: 'easeOutElastic(1, .5)'
+                    });
+                    
+                    // Animate area
+                    anime({
+                        targets: '.data-area',
+                        opacity: [0, 1],
+                        duration: 1000,
+                        easing: 'easeInOutQuad',
+                        delay: 1500
+                    });
+                    break;
+                    
+                case 'gauge':
+                    // Gauge animation
+                    anime.set('.gauge-fill', {
+                        opacity: 0
+                    });
+                    
+                    anime.set('.gauge-needle', {
+                        transform: 'rotate(-90deg, 100, 100)'
+                    });
+                    
+                    anime.set('.gauge-text', {
+                        opacity: 0,
+                        innerHTML: '0%'
+                    });
+                    
+                    // Animate gauge fill
+                    anime({
+                        targets: '.gauge-fill',
+                        opacity: 1,
+                        duration: 1000,
+                        easing: 'easeInOutQuad'
+                    });
+                    
+                    // Animate needle
+                    anime({
+                        targets: '.gauge-needle',
+                        transform: 'rotate(90deg, 100, 100)',
+                        duration: 2000,
+                        easing: 'easeOutElastic(1, .5)'
+                    });
+                    
+                    // Animate text
+                    anime({
+                        targets: '.gauge-text',
+                        opacity: 1,
+                        innerHTML: [0, 75],
+                        round: 1,
+                        suffix: '%',
+                        duration: 2000,
+                        easing: 'easeInOutQuad'
+                    });
+                    break;
+                    
+                case '3d':
+                    // 3D terrain animation
+                    const terrain = document.querySelector('.terrain');
+                    terrain.innerHTML = ''; // Clear existing terrain
+                    
+                    // Create terrain grid
+                    const gridSize = 8;
+                    for (let x = 0; x < gridSize; x++) {
+                        for (let z = 0; z < gridSize; z++) {
+                            const cell = document.createElement('div');
+                            cell.classList.add('terrain-cell');
+                            cell.style.position = 'absolute';
+                            cell.style.width = '20px';
+                            cell.style.height = '20px';
+                            cell.style.backgroundColor = `rgba(${255 - x * 20}, ${107 + z * 10}, ${107 + x * 10}, 0.8)`;
+                            cell.style.transform = `translate3d(${x * 20}px, 0, ${z * 20}px)`;
+                            cell.style.transformOrigin = 'center bottom';
+                            cell.style.boxShadow = '0 0 5px rgba(0,0,0,0.3)';
+                            terrain.appendChild(cell);
+                        }
+                    }
+                    
+                    // Animate terrain cells
+                    anime({
+                        targets: '.terrain-cell',
+                        translateY: function(el, i) {
+                            const x = i % gridSize;
+                            const z = Math.floor(i / gridSize);
+                            // Create a wave pattern
+                            return -Math.sin(x / 2) * Math.cos(z / 2) * 50 - 10;
+                        },
+                        delay: anime.stagger(50, {
+                            grid: [gridSize, gridSize],
+                            from: 'center'
+                        }),
+                        duration: 2000,
+                        easing: 'easeOutElastic(1, .5)'
+                    });
+                    
+                    // Rotate terrain
+                    anime({
+                        targets: '.terrain',
+                        rotateZ: [0, 360],
+                        duration: 20000,
+                        easing: 'linear',
+                        loop: true
+                    });
+                    break;
+            }
+        }
+
+        // Text Animation
+        function initTextAnimation(type) {
+            // Hide all text animations first
+            document.querySelector('.stagger-text').style.display = 'none';
+            document.querySelector('.typewriter-text').style.display = 'none';
+            document.querySelector('.kinetic-text').style.display = 'none';
+            
+            // Show selected text animation
+            document.querySelector('.' + type + '-text').style.display = 'flex';
+            
+            switch(type) {
+                case 'stagger':
+                    // Character stagger animation (original)
+                    anime.set('.text-char', {
+                        opacity: 0,
+                        translateY: 20,
+                        rotateX: 90
+                    });
+                    
+                    // Animate text characters
+                    anime({
+                        targets: '.text-char',
+                        opacity: [0, 1],
+                        translateY: [20, 0],
+                        rotateX: [90, 0],
+                        delay: anime.stagger(100),
+                        duration: 800,
+                        easing: 'easeOutExpo'
+                    });
+                    break;
+                    
+                case 'typewriter':
+                    // Typewriter effect
+                    const typewriterLine = document.querySelector('.typewriter-line');
+                    const typewriterCursor = document.querySelector('.typewriter-cursor');
+                    
+                    typewriterLine.innerHTML = '';
+                    const text = 'Coding animations made simple.';
+                    
+                    // Animate cursor
+                    anime({
+                        targets: typewriterCursor,
+                        opacity: [1, 0],
+                        duration: 800,
+                        easing: 'steps(1)',
+                        loop: true
+                    });
+                    
+                    // Type out text
+                    let i = 0;
+                    const typeInterval = setInterval(() => {
+                        if (i < text.length) {
+                            typewriterLine.innerHTML += text.charAt(i);
+                            i++;
+                        } else {
+                            clearInterval(typeInterval);
+                            
+                            // Highlight key words
+                            setTimeout(() => {
+                                typewriterLine.innerHTML = typewriterLine.innerHTML.replace('simple', '<span style="color: #FF6B6B; font-weight: bold;">simple</span>');
+                            }, 500);
+                        }
+                    }, 100);
+                    break;
+                    
+                case 'kinetic':
+                    // Kinetic typography
+                    anime.set('.kinetic-char', {
+                        opacity: 0,
+                        scale: 0
+                    });
+                    
+                    // Animate characters with different effects
+                    anime.timeline()
+                        .add({
+                            targets: '.kinetic-char',
+                            opacity: 1,
+                            scale: [0, 1],
+                            rotate: function() { return anime.random(-15, 15); },
+                            translateY: function() { return anime.random(-10, 10); },
+                            delay: anime.stagger(150),
+                            duration: 800,
+                            easing: 'easeOutElastic(1, .5)'
+                        })
+                        .add({
+                            targets: '.kinetic-word',
+                            rotateY: [0, 360],
+                            duration: 2000,
+                            easing: 'easeInOutSine',
+                            delay: 500
+                        });
+                    break;
+            }
+        }
+    </script>
+
+    <!-- Final Call to Action Section -->
+    <section style="text-align: center; padding: 6rem 2rem; position: relative; overflow: hidden; background: linear-gradient(rgba(10, 10, 10, 0.9), rgba(10, 10, 10, 0.95));">
+        <h2 style="font-size: 3rem; margin-bottom: 1.5rem; background: linear-gradient(45deg, #FF6B6B, #4ECDC4); -webkit-background-clip: text; background-clip: text; color: transparent;">Ready to transform your designs?</h2>
+        <p style="color: rgba(255, 255, 255, 0.8); font-size: 1.2rem; max-width: 600px; margin: 0 auto 2rem;">Join thousands of designers who are already creating stunning animations with Agentimate.</p>
+        <a href="#get-started" class="cta-button" style="font-size: 1.3rem; padding: 1.2rem 3rem;">Get Started Now</a>
+    </section>
+
+    <!-- Add this before the closing body tag -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <div class="footer-logo">
+                    <span class="footer-logo-icon">⬡</span>
+                    Agentimate
+                </div>
+                <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.9rem;">
+                    Transform your ideas into stunning animations with AI-powered design tools.
+                </p>
+                <div class="footer-social">
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" aria-label="Discord"><i class="fab fa-discord"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3>Product</h3>
+                <a href="#about">About</a>
+                <a href="#solutions">Solutions</a>
+                <a href="#blog">Blog</a>
+                <a href="#careers">Careers</a>
+                <a href="#changelog">Changelog</a>
+            </div>
+
+            <div class="footer-section">
+                <h3>Resources</h3>
+                <a href="#builder">Builder Hall of Fame</a>
+                <a href="#learn">Learn</a>
+                <a href="#integrations">Integrations</a>
+                <a href="#support">Support</a>
+                <a href="#launched">Launched</a>
+            </div>
+
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <a href="#privacy">Privacy Policy</a>
+                <a href="#terms">Terms & Conditions</a>
+                <a href="#abuse">Report Abuse</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html> 
